@@ -1,0 +1,29 @@
+- hosts: servers
+  become: yes
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name: [docker.io, git]
+        update_cache: yes
+        state: present
+
+    - name: Start Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Install kubectl
+      snap:
+        name: kubectl
+        classic: yes
+
+    - name: Install Jenkins
+      shell: |
+        wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+        echo "deb https://pkg.jenkins.io/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+        apt update
+        apt install -y jenkins
+        systemctl start jenkins
+        systemctl enable jenkins
