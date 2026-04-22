@@ -1,0 +1,40 @@
+# Root gitignore for blue-green-lab
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Visual Studio / VS Code
+.vscode/
+*.code-workspace
+
+# Python caches (if any scripts/tools are added later)
+__pycache__/
+*.py[cod]
+
+# Node modules (if any front-end tooling is added later)
+node_modules/
+
+# Terraform local state
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Logs
+*.log
+
+# Generated files
+*.zip
+*.tar.gz
+
+# Ignore secrets/config
+.env
+.env.*
+secret*.json
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+.idea/
+*.pem

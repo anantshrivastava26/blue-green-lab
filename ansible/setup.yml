@@ -3,9 +3,12 @@
   tasks:
 
     - name: Install dependencies
-      apt:
-        name: [docker.io, git]
-        update_cache: yes
+      dnf:
+        name:
+          - docker
+          - git
+          - java-17-amazon-corretto
+          - wget
         state: present
 
     - name: Start Docker
@@ -14,16 +17,24 @@
         state: started
         enabled: yes
 
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
     - name: Install kubectl
-      snap:
-        name: kubectl
-        classic: yes
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      args:
+        creates: /usr/local/bin/kubectl
 
     - name: Install Jenkins
       shell: |
-        wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
-        echo "deb https://pkg.jenkins.io/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
-        apt update
-        apt install -y jenkins
+        wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+        dnf install -y jenkins
+        systemctl daemon-reload
         systemctl start jenkins
         systemctl enable jenkins

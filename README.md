@@ -43,9 +43,12 @@ This provisions the necessary AWS EC2 instance for our lab.
 
 This installs Docker, Jenkins, and kubectl on our newly provisioned EC2 instance.
 
+Target OS: Amazon Linux 2023 (AMI `ami-098e39bafa7e7303d`)
+
 ### Execution Steps
 1. Update the `ansible/inventory.ini` file:
    - Replace `<EC2_PUBLIC_IP>` with the actual public IP of your EC2 instance.
+   - Keep `ansible_user=ec2-user` for Amazon Linux 2023.
    - Make sure `ansible_ssh_private_key_file` points to the correct location of your `.pem` key.
 
 2. Run the Ansible playbook to configure the server:
@@ -91,7 +94,7 @@ This step builds our sample application.
 
 1. SSH into your EC2 instance:
    ```bash
-   ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
+   ssh -i your-key.pem ec2-user@<EC2_PUBLIC_IP>
    ```
 2. Install Minikube and start the cluster:
    ```bash
@@ -108,6 +111,14 @@ This step builds our sample application.
 ---
 
 ## Step 5: Kubernetes Deployments
+
+Before running the apply commands, make sure you are in the project directory on the EC2 instance (or use absolute paths to the manifest files).
+
+Example:
+```bash
+git clone <your-repo-url> blue-green-lab
+cd blue-green-lab
+```
 
 ### 1. Deploy Blue Environment
 Apply the blue deployment and the service:
